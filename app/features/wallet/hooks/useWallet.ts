@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
 
+declare global {
+    interface Window {
+        ethereum: any;
+    }
+}
+
 import { 
     http,
     createPublicClient,
@@ -23,7 +29,7 @@ const publicClient = createPublicClient({
 // this creates a wallet client to interact with the blockchain
 const walletClient = createWalletClient({
     chain: unichainSepolia,
-    transport: http()
+    transport: custom(window.ethereum ?? {})
 })
 
 export function useWallet() {
@@ -31,8 +37,6 @@ export function useWallet() {
     const [address, setAddress] = useState<Address | null>(null);
     const [hash, setHash] = useState<Hash | null>(null);
     const [receipt, setReceipt] = useState<TransactionReceipt | null>(null);
-    const [error, setError] = useState<Error | null>(null);
-    const [loading, setLoading] = useState(false);
     const [balance, setBalance] = useState<string | null>(null);
 
     // if there is a hash, we wait for the transaction reciept and set the reciept
@@ -75,10 +79,10 @@ export function useWallet() {
     
 
     // this function is used to send transactions
-    const sendTransaction = async (to: Address, value: bigint) => {
+    const sendTransaction = async (to: Address, value: string) => {
         if (!account) return;
 
-        const valueinWei = BigInt(BigInt(parseFloat(value) * 10 ** 6));
+        const valueinWei = BigInt(parseFloat(value) * 10 ** 6);
 
         const data = encodeFunctionData({
             abi: USDC_ABI,
@@ -86,6 +90,7 @@ export function useWallet() {
             args: [to, valueinWei]
         })
 
+        // send the transaction using the wallet client
         const hash = await walletClient.sendTransaction({
             account: account,
             to: USDC_CONTRACT_ADDRESS,
@@ -99,8 +104,7 @@ export function useWallet() {
         account: account,
         balance: balance,
         receipt: receipt,
-        error: error,
-        loading: loading,
+        connect: connect,
         sendTransaction: sendTransaction,
     }
 }

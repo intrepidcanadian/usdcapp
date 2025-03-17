@@ -1,3 +1,13 @@
+## COMPONENT RENDERING
+
+Location of components are saved are in components.json config file
+- To add further components, just to do npx shadcn@latest add <component-name>
+
+
+
+
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

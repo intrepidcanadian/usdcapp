@@ -1,7 +1,8 @@
 
-
+// this is the address of the USDC contract on the unichain sepolia testnet
 export const USDC_CONTRACT_ADDRESS = '0x31d0220469e10c4E71834a79b1f276d740d3768F';
 
+// this is the ABI of the USDC contract
 export const USDC_ABI = [
     {
       // Function to transfer USDC tokens from the caller's address to a specified address
