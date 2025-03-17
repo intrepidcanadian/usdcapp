@@ -34,33 +34,50 @@ export function useWallet() {
         transport: http()
     })
 
-    // this creates a wallet client to interact with the blockchain
-    const walletClient = createWalletClient({
-        chain: unichainSepolia,
-        transport: custom(window.ethereum ?? {})
-    })
+    const [walletClient, setWalletClient] = useState<any>(null);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const client = createWalletClient({
+                chain: unichainSepolia,
+                transport: custom(window.ethereum ?? {})
+            });
+            setWalletClient(client);
+        }
+    }, []);
 
     // if there is a hash, we wait for the transaction reciept and set the reciept
     useEffect(() => {
         (async () => {
           if (hash) {
+            console.log('Waiting for receipt...');
             const receipt = await publicClient.waitForTransactionReceipt({ hash });
+            console.log('Receipt received:', receipt);
             setReceipt(receipt);
           }
         })();
-      }, [hash]);
+    }, [hash]);
 
     //   if there is a transaction receipt, we want to fetch the balances
 
+    useEffect(() => {
+        if (account) {
+            fetchBalance(account);
+        }
+    }, [account]);
+
     // refreshes the balance of the account everytime there is a receipt of transaction
     useEffect(() => {
-      if (account && receipt) {
-        fetchBalance(account);
-      }
-    }, [receipt]);
+        console.log('Balance refresh triggered. Account:', account, 'Receipt:', receipt);
+        if (account && receipt) {
+            console.log('Fetching new balance...');
+            fetchBalance(account);
+        }
+    }, [receipt, account]);
 
     // this function fetches the balance of the account
     const fetchBalance = async (address: Address) => {
+        console.log('Fetching balance for address:', address);
         const balance = await publicClient.readContract({
             address: USDC_CONTRACT_ADDRESS,
             functionName: 'balanceOf',
@@ -69,13 +86,15 @@ export function useWallet() {
         });
 
         const formattedBalance = (Number(balance) / 10 ** 6).toFixed(2);
+        console.log('New balance:', formattedBalance);
         setBalance(formattedBalance);
     }
 
     const connect = async () => {
+        if (!walletClient) return;
+
         const [address] = await walletClient.requestAddresses();
         setAccount(address);
-        await fetchBalance(address);
     }
     
 
