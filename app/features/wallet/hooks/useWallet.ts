@@ -20,24 +20,25 @@ import type { Address, Hash, TransactionReceipt } from 'viem';
 
 import { USDC_CONTRACT_ADDRESS, USDC_ABI } from '../constants/contracts';
 
-// this creates a public client to interact with the blockchain
-const publicClient = createPublicClient({
-    chain: unichainSepolia,
-    transport: http()
-})
-
-// this creates a wallet client to interact with the blockchain
-const walletClient = createWalletClient({
-    chain: unichainSepolia,
-    transport: custom(window.ethereum ?? {})
-})
-
 export function useWallet() {
     const [account, setAccount] = useState<Address | null>(null);
     const [address, setAddress] = useState<Address | null>(null);
     const [hash, setHash] = useState<Hash | null>(null);
     const [receipt, setReceipt] = useState<TransactionReceipt | null>(null);
     const [balance, setBalance] = useState<string | null>(null);
+
+
+    // this creates a public client to interact with the blockchain
+    const publicClient = createPublicClient({
+        chain: unichainSepolia,
+        transport: http()
+    })
+
+    // this creates a wallet client to interact with the blockchain
+    const walletClient = createWalletClient({
+        chain: unichainSepolia,
+        transport: custom(window.ethereum ?? {})
+    })
 
     // if there is a hash, we wait for the transaction reciept and set the reciept
     useEffect(() => {

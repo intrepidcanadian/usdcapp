@@ -37,7 +37,7 @@ export default function WalletInterface() {
 
     return (
 
-        <div className = "min-h-screen bg-black p-4">
+        <div className = "min-h-screen bg-black p-4 flex items-center justify-center">
             <div className = "max-w-md mx-auto space-y-2">
                 <div className = "mb-3 bg-[#1c1c1c] text-green-500 p-2 rounded-lg text-sm flex items-center gap-2">
                     <Wallet className = "h-4 w-4" />
@@ -74,40 +74,65 @@ export default function WalletInterface() {
                         >Connect Wallet</Button>
                     ) : (
                         <div className = "space-y-6">
-                            <div className = "flex items-center">
+                            <div className = "flex items-center gap-2">
+                                <img src = "/usdc.png" alt = "USDC Logo" className = "ml-2 w-8 h-8" />
                                 <div className = "text-4xl font-bold">
-                                    ${balance ? balance : '0.00'}
-                                    <img src = "/usdc.png" alt = "USDC Logo" className = "ml-2 w-8 h-8" />
+                                    ${balance ? balance : '0.00'} 
                                 </div>
                             </div>
-                            
+                    
+                        <Tabs defaultValue = "send" className = "w-full">
+                            <TabsContent value = "send" className = "space-y-4">
+                                <div className = "space-y-2">
+                                    <Input 
+                                        ref = {addressInput}
+                                        placeholder = "Send to address"
+                                        className = "bg-[#2a2a2a] text-white border-0 placeholder:text-gray-500"
+                                    />
+                                    <Input 
+                                        ref = {valueInput}
+                                        placeholder = "USDC Amount"
+                                        type = "number"
+                                    />
+                                    <Button
+                                        onClick = {handleSendTransaction}
+                                        className = "w-full bg-purple-700 hover:bg-purple-600"
+                                        >
+                                        Send
+                                    </Button>
+                                </div>
+
+                                    {receipt && (
+                                        <div className = "mt-4 p-4 bg-[#2a2a2a] rounded-lg">
+                                            <div className = "text-sm text-gray-400">
+                                                Transaction Reciept:
+                                            </div>
+                                            <pre className = "text-xs overflow-auto">
+                                                {JSON.stringify(receipt, bigIntReplacer, 2)}
+                                            </pre>
+                                        </div>
+                                    )}
+                                
+                            </TabsContent>
+
+                        </Tabs>
                         </div>
                     )
                     }
                         
                 </CardContent>
-
-
-
-
             </Card>
 
+             <div className = "flex justify-center items-center space-x-4 text-white text-sm mt-4">
+                <a href="https://developers.circle.com/stablecoins/what-is-usdc" className="hover:text-purple-400 transition-colors">What is USDC</a>
+                <a href="https://developers.circle.com/w3s/circle-programmable-wallets-an-overview" className="hover:text-purple-400 transition-colors">Developer Tools</a>
+                <a href="https://www.circle.com" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors">Go to Circle.com</a>
+             </div>
+
+
             </div>
-
         </div>
-            // <div>
-            //     <div>
-            //         < Wallet / >
-            //     </div>
-
-            //     <CardContent>
-            //         <Button
-            //             onClick={connect}
-            //         >
-            //             Connect Wallet
-            //         </Button>
-            //     </CardContent>
-            // </div>
+            
     )
 
 }
